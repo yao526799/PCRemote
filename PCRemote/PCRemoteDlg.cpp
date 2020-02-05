@@ -7,6 +7,7 @@
 #include "PCRemote.h"
 #include "PCRemoteDlg.h"
 #include "afxdialogex.h"
+#include "CSettingDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -132,6 +133,7 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 	ON_COMMAND(IDM_NOTIFY_SHOW, &CPCRemoteDlg::OnNotifyShow)
 //	ON_WM_CLOSE()
 	ON_WM_DESTROY()
+	ON_COMMAND(IDM_MAIN_SET, &CPCRemoteDlg::OnMainSet)
 END_MESSAGE_MAP()
 
 
@@ -276,7 +278,7 @@ BOOL CPCRemoteDlg::OnInitDialog()
 	rect.bottom += 20;
 	MoveWindow(rect);
 
-	Activate(8888, 100000);
+	ListenPort();
 	test();
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -573,6 +575,20 @@ void CPCRemoteDlg::OnOnlineWindow()
 }
 
 
+void CPCRemoteDlg::OnMainSet()
+{
+	// TODO: 在此添加命令处理程序代码
+	CSettingDlg SettingDlg;
+	SettingDlg.DoModal();
+}
+
+void CPCRemoteDlg::OnMainAbout()
+{
+	// TODO: 在此添加命令处理程序代码
+	CAboutDlg dlgAbout;
+	dlgAbout.DoModal();
+}
+
 void CPCRemoteDlg::OnOnlineDelete()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -594,12 +610,7 @@ void CPCRemoteDlg::OnMainClose()
 }
 
 
-void CPCRemoteDlg::OnMainAbout()
-{
-	// TODO: 在此添加命令处理程序代码
-	CAboutDlg dlgAbout;
-	dlgAbout.DoModal();
-}
+
 
 
 void CPCRemoteDlg::CreatStatusBar()
@@ -719,3 +730,17 @@ void CPCRemoteDlg::OnDestroy()
 
 	// TODO: 在此处添加消息处理程序代码
 }
+
+
+void CPCRemoteDlg::ListenPort()
+{
+	// TODO: 在此处添加实现代码.
+	int	nPort = ((CPCRemoteApp*)AfxGetApp())->m_IniFile.GetInt("Settings", "ListenPort");         //读取ini 文件中的监听端口
+	int	nMaxConnection = ((CPCRemoteApp*)AfxGetApp())->m_IniFile.GetInt("Settings", "MaxConnection");   //读取最大连接数
+	if (nPort == 0)
+		nPort = 80;
+	if (nMaxConnection == 0)
+		nMaxConnection = 10000;
+	Activate(nPort, nMaxConnection);
+}
+

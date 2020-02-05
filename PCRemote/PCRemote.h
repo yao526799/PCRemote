@@ -9,6 +9,7 @@
 #endif
 
 #include "resource.h"		// 主符号
+#include "IniFile.h"
 
 
 // CPCRemoteApp:
@@ -23,6 +24,7 @@ public:
 // 重写
 public:
 	virtual BOOL InitInstance();
+	CIniFile m_IniFile;
 
 // 实现
 

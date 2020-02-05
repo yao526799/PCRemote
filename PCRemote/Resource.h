@@ -16,8 +16,11 @@
 #define IDR_TOOLBAR_MAIN                132
 #define IDB_BITMAP_MAIN                 134
 #define IDR_MENU_NOTIFY                 135
+#define IDD_DIALOG_SETTING              136
 #define IDC_ONLINE                      1000
 #define IDC_MESSAGE                     1001
+#define IDC_EDIT_PORT                   1001
+#define IDC_EDIT_MAX                    1002
 #define ID_ONLINE_32771                 32771
 #define ID_ONLINE_32772                 32772
 #define ID_Menu                         32773
@@ -60,9 +63,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        136
+#define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32819
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
