@@ -4,6 +4,7 @@
 
 #pragma once
 #include "TrueColorToolBar.h"
+#include "include/IOCPServer.h"
 
 
 // CPCRemoteDlg 对话框
@@ -45,7 +46,11 @@ public:
 	void AddList(CString strIP, CString strAddr, CString strPCName, CString strOS, CString strCPU, CString strVideo, CString strPing);
 	// add msg to msglist
 	void ShowMessage(bool bIsOK, CString strMsg);
+	void Activate(UINT nPort, UINT nMaxConnections);
+	//重要的回调函数
+	static void CALLBACK NotifyProc(LPVOID lpParam, ClientContext* pContext, UINT nCode);
 	void test();
+
 	afx_msg void OnNMRClickOnline(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnOnlineAudio();
 	afx_msg void OnOnlineCmd();

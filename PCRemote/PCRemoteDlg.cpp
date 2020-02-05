@@ -54,6 +54,7 @@ static UINT indicators[] =
 	IDR_STAUTSCOUNT
 };
 
+CIOCPServer* m_iocpServer = NULL;
 
 
 
@@ -134,6 +135,85 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
+
+//lang2.1_9  NotifyProc是这个socket内核的核心  所有的关于socket 的处理都要调用这个函数
+void CALLBACK CPCRemoteDlg::NotifyProc(LPVOID lpParam, ClientContext* pContext, UINT nCode)
+{
+	try
+	{
+
+		//str.Format("S: %.2f kb/s R: %.2f kb/s", (float)m_iocpServer->m_nSendKbps / 1024, (float)m_iocpServer->m_nRecvKbps / 1024);
+		//g_pFrame->m_wndStatusBar.SetPaneText(1, str);
+
+		switch (nCode)
+		{
+		case NC_CLIENT_CONNECT:
+			break;
+		case NC_CLIENT_DISCONNECT:
+			//g_pConnectView->PostMessage(WM_REMOVEFROMLIST, 0, (LPARAM)pContext);
+			break;
+		case NC_TRANSMIT:
+			break;
+		case NC_RECEIVE:
+			//ProcessReceive(pContext);        //这里是有数据到来 但没有完全接收
+			break;
+		case NC_RECEIVE_COMPLETE:
+			//ProcessReceiveComplete(pContext);       //这里时完全接收 处理发送来的数据 跟进    ProcessReceiveComplete
+			break;
+		}
+	}
+	catch (...) {}
+}
+void CPCRemoteDlg::Activate(UINT nPort, UINT nMaxConnections)
+{
+	CString		str;
+
+	if (m_iocpServer != NULL)
+	{
+		m_iocpServer->Shutdown();
+		delete m_iocpServer;
+
+	}
+	m_iocpServer = new CIOCPServer;
+
+	////lang2.1_8
+	// 开启IPCP服务器 最大连接  端口     查看NotifyProc回调函数  函数定义
+	if (m_iocpServer->Initialize(NotifyProc, NULL, 100000, nPort))
+	{
+
+		char hostname[256];
+		gethostname(hostname, sizeof(hostname));
+		HOSTENT* host = gethostbyname(hostname);
+		if (host != NULL)
+		{
+			for (int i = 0; ; i++)
+			{
+				str += inet_ntoa(*(IN_ADDR*)host->h_addr_list[i]);
+				if (host->h_addr_list[i] + host->h_length >= host->h_name)
+					break;
+				str += "/";
+			}
+		}
+
+		m_wndStatusBar.SetPaneText(0, str);
+		str.Format("端口: %d", nPort);
+		m_wndStatusBar.SetPaneText(2, str);
+
+		str.Format("监听端口: %d成功", nPort);
+		ShowMessage(true, str);
+	}
+	else
+	{
+		str.Format("端口%d绑定失败", nPort);
+		m_wndStatusBar.SetPaneText(0, str);
+		m_wndStatusBar.SetPaneText(2, "端口: 0");
+		str.Format("监听端口: %d失败", nPort);
+		ShowMessage(false, str);
+	}
+
+	m_wndStatusBar.SetPaneText(3, "连接: 0");
+}
+
 // CPCRemoteDlg 消息处理程序
 
 BOOL CPCRemoteDlg::OnInitDialog()
@@ -190,13 +270,14 @@ BOOL CPCRemoteDlg::OnInitDialog()
 	Shell_NotifyIcon(NIM_ADD, &nid);   //显示托盘
 
 	ShowMessage(true, "软件初始化成功...");
-	test();
-
+	
 	CRect rect;
 	GetWindowRect(&rect);
 	rect.bottom += 20;
 	MoveWindow(rect);
 
+	Activate(8888, 100000);
+	test();
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -313,7 +394,7 @@ void CPCRemoteDlg::OnSize(UINT nType, int cx, int cy)
 		rc.bottom = cy;
 		m_wndStatusBar.MoveWindow(rc);
 		//m_wndStatusBar.SetPaneInfo(0, m_wndStatusBar.GetItemID(0), SBPS_POPOUT, cx - 10);
-		m_wndStatusBar.SetPaneInfo(0, m_wndStatusBar.GetItemID(0), SBPS_NORMAL,  30);
+		m_wndStatusBar.SetPaneInfo(0, m_wndStatusBar.GetItemID(0), SBPS_NORMAL, 330);
 		m_wndStatusBar.SetPaneInfo(1, m_wndStatusBar.GetItemID(1), SBPS_NORMAL, 160);
 		m_wndStatusBar.SetPaneInfo(2, m_wndStatusBar.GetItemID(2), SBPS_NORMAL, 70);
 	    m_wndStatusBar.SetPaneInfo(3, m_wndStatusBar.GetItemID(3), SBPS_NORMAL, 80);
@@ -326,7 +407,6 @@ void CPCRemoteDlg::OnSize(UINT nType, int cx, int cy)
 		rc.bottom = 80;
 		m_ToolBar.MoveWindow(rc);     //设置工具条大小位置
 	}
-
 
 }
 
@@ -453,6 +533,7 @@ void CPCRemoteDlg::OnOnlineAudio()
 void CPCRemoteDlg::OnOnlineCmd()
 {
 	// TODO: 在此添加命令处理程序代码
+	MessageBox("命令窗口");
 }
 
 

@@ -15,46 +15,73 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Buffer.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CpuUsage.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mapper.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="PCRemote.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="PCRemoteDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="TrueColorToolBar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IOCPServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Buffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="include\CpuUsage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="PCRemote.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PCRemoteDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="TrueColorToolBar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TrueColorToolBar.cpp">
+    <ClCompile Include="include\IOCPServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PCRemote.rc">
+    <Image Include="res\PCRemote.ico">
       <Filter>资源文件</Filter>
-    </ResourceCompile>
+    </Image>
+    <Image Include="res\ToolBar_Main.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\toolbar1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\PCRemote.rc2">
@@ -62,14 +89,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\PCRemote.ico">
+    <ResourceCompile Include="PCRemote.rc">
       <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\toolbar1.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\ToolBar_Main.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
