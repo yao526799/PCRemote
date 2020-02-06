@@ -6,3 +6,6 @@
 /PCRemote/.vs/PCRemote/v16
 /PCRemote/Debug
 /PCRemote/x64/Debug
+/MainDll/Release
+/MainDll/Debug
+/bin/server
