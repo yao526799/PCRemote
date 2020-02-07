@@ -95,7 +95,8 @@ bool CClientSocket::Connect(LPCTSTR lpszHost, UINT nPort)
 	}
 	// 不用保活机制，自己用心跳实瑞
 	
-	const char chOpt = 1; // True
+	//const char chOpt = 1; // True
+	DWORD chOpt = 1;
 	// Set KeepAlive 开启保活机制, 防止服务端产生死连接
 	if (setsockopt(m_Socket, SOL_SOCKET, SO_KEEPALIVE, (char *)&chOpt, sizeof(chOpt)) == 0)
 	{
@@ -112,7 +113,7 @@ bool CClientSocket::Connect(LPCTSTR lpszHost, UINT nPort)
 			sizeof(tcp_keepalive),
 			NULL,
 			0,
-			(unsigned long *)&chOpt,
+			&chOpt,
 			0,
 			NULL
 			);

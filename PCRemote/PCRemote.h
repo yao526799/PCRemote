@@ -25,6 +25,7 @@ public:
 public:
 	virtual BOOL InitInstance();
 	CIniFile m_IniFile;
+	bool m_bIsQQwryExist;
 
 // 实现
 

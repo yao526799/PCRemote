@@ -54,6 +54,12 @@
     <ClInclude Include="CSettingDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SEU_QQwry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CShellDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\Buffer.cpp">
@@ -81,6 +87,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CSettingDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SEU_QQwry.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CShellDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

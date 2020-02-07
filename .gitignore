@@ -9,3 +9,10 @@
 /MainDll/Release
 /MainDll/Debug
 /bin/server
+/bin
+/MainDll/x64/Release
+/PCRemote/Release
+/PCRemote/x64/Release
+/TestDll/Debug
+/TestDll/Release
+/TestDll/x64/Release

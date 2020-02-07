@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PCRemote", "PCRemote.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MainDll", "..\MainDll\MainDll.vcxproj", "{F0D27C6A-37B3-4992-A992-66EDB28C5442}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDll", "..\TestDll\TestDll.vcxproj", "{6F7B1325-8F3E-4C1E-A459-F7596C305350}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{F0D27C6A-37B3-4992-A992-66EDB28C5442}.Release|x64.Build.0 = Release|x64
 		{F0D27C6A-37B3-4992-A992-66EDB28C5442}.Release|x86.ActiveCfg = Release|Win32
 		{F0D27C6A-37B3-4992-A992-66EDB28C5442}.Release|x86.Build.0 = Release|Win32
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Debug|x64.ActiveCfg = Debug|x64
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Debug|x64.Build.0 = Debug|x64
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Debug|x86.ActiveCfg = Debug|Win32
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Debug|x86.Build.0 = Debug|Win32
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Release|x64.ActiveCfg = Release|x64
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Release|x64.Build.0 = Release|x64
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Release|x86.ActiveCfg = Release|Win32
+		{6F7B1325-8F3E-4C1E-A459-F7596C305350}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
