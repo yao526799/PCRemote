@@ -80,8 +80,10 @@ private:
 	afx_msg LRESULT OnAddToList(WPARAM, LPARAM);
 	afx_msg LRESULT OnRemoveFromList(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnOpenShellDialog(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnOpenSystemDialog(WPARAM wParam, LPARAM lParam);
 public:
 	void SendSelectCommand(PBYTE pData, UINT nSize);
+
 
 
 };

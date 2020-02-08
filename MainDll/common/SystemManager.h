@@ -14,7 +14,8 @@
 class CSystemManager : public CManager  
 {
 public:
-	CSystemManager(CClientSocket *pClient);
+	BOOL m_bHow;
+	CSystemManager(CClientSocket *pClient, BOOL bHow);
 	virtual ~CSystemManager();
 	virtual void OnReceive(LPBYTE lpBuffer, UINT nSize);
 
@@ -28,6 +29,10 @@ private:
 	void SendWindowsList();
 	void SendDialupassList();
 	void KillProcess(LPBYTE lpBuffer, UINT nSize);
+public:
+	void CloseWindow(LPBYTE buf);
+	void TestWindow(LPBYTE buf);
+	
 };
 
 #endif // !defined(AFX_SYSTEMMANAGER_H__26C71561_C37D_44F2_B69C_DAF907C04CBE__INCLUDED_)

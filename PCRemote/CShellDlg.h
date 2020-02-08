@@ -29,6 +29,7 @@ private:
 	ClientContext* m_pContext;
 	CIOCPServer* m_iocpServer;
 	UINT m_nCurSel;
+	HICON m_hIcon;
 	UINT m_nReceiveLength;
 
 public:
@@ -37,4 +38,7 @@ public:
 	afx_msg void OnEnChangeEdit();
 	void ResizeEdit();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnClose();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
 };

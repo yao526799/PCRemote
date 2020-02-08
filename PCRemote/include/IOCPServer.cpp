@@ -369,7 +369,8 @@ void CIOCPServer::OnAccept()
 
 	// 关闭nagle算法,以免影响性能，因为控制时控制端要发送很多数据量很小的数据包,要求马上发送
 	// 暂不关闭，实验得知能网络整体性能有很大影响
-	const char chOpt = 1;
+	//const char chOpt = 1;
+	DWORD chOpt = 1;
 
 // 	int nErr = setsockopt(pContext->m_Socket, IPPROTO_TCP, TCP_NODELAY, &chOpt, sizeof(char));
 // 	if (nErr == -1)
@@ -397,7 +398,7 @@ void CIOCPServer::OnAccept()
 		sizeof(tcp_keepalive),
 		NULL,
 		0,
-		(unsigned long *)&chOpt,
+		&chOpt,
 		0,
 		NULL
 		);

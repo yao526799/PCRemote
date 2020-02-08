@@ -17,13 +17,18 @@
 #define IDB_BITMAP_MAIN                 134
 #define IDR_MENU_NOTIFY                 135
 #define IDD_DIALOG_SETTING              136
-#define IDD_DIALOG1                     138
 #define IDD_SHELL                       138
+#define IDI_CMDSHELL                    140
+#define IDD_SYSTEM                      141
+#define IDI_SYSTEM                      143
+#define IDR_PSLIST                      144
+#define IDR_WINDOW_LIST                 145
 #define IDC_ONLINE                      1000
 #define IDC_MESSAGE                     1001
 #define IDC_EDIT_PORT                   1001
 #define IDC_EDIT_MAX                    1002
 #define IDC_EDIT                        1002
+#define IDC_LIST_PROCESS                1007
 #define ID_ONLINE_32771                 32771
 #define ID_ONLINE_32772                 32772
 #define ID_Menu                         32773
@@ -61,14 +66,30 @@
 #define ID_32816                        32816
 #define IDM_NOTIFY_SHOW                 32817
 #define IDM_NOTIFY_CLOSE                32818
+#define ID_PSLIST_32819                 32819
+#define ID_PSLIST_32820                 32820
+#define IDM_KILLPROCESS                 32821
+#define IDM_REFRESHPSLIST               32822
+#define ID_PSWINDOW_32823               32823
+#define ID_PSWINDOW_32824               32824
+#define ID_PSWINDOW_32825               32825
+#define ID_PSWINDOW_32826               32826
+#define ID_PSWINDOW_32827               32827
+#define ID_PSWINDOW_32828               32828
+#define ID_WINDOW_REFLUSH               32829
+#define ID_WINDOW_CLOSE                 32830
+#define ID_WINDOW_HIDE                  32831
+#define ID_WINDOW_RETURN                32832
+#define ID_WINDOW_MAX                   32833
+#define ID_WINDOW_MIN                   32834
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32819
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_RESOURCE_VALUE        146
+#define _APS_NEXT_COMMAND_VALUE         32835
+#define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
