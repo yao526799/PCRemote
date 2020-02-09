@@ -86,6 +86,14 @@ typedef struct
 	DWORD			dwSpeed;		// 网速
 }LOGININFO;
 
+typedef struct
+{
+	DWORD	dwSizeHigh;
+	DWORD	dwSizeLow;
+}FILESIZE;
+
+
+#define MAKEINT64(low, high) ((unsigned __int64)(((DWORD)(low)) | ((unsigned __int64)((DWORD)(high))) << 32))
 
 #endif //PCH_H
 
