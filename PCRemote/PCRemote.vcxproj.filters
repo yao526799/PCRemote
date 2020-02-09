@@ -63,6 +63,12 @@
     <ClInclude Include="CSystemDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CScreenSpyDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CFileManagerDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\Buffer.cpp">
@@ -101,6 +107,12 @@
     <ClCompile Include="CSystemDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CScreenSpyDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CFileManagerDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\PCRemote.ico">
@@ -121,6 +133,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\PCRemote.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\cursor1.cur">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\dot.cur">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

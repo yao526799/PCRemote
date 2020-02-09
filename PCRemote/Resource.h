@@ -23,12 +23,20 @@
 #define IDI_SYSTEM                      143
 #define IDR_PSLIST                      144
 #define IDR_WINDOW_LIST                 145
+#define IDD_SCREENSPY                   146
+#define IDC_DOT                         149
+#define IDD_FILE                        150
 #define IDC_ONLINE                      1000
 #define IDC_MESSAGE                     1001
 #define IDC_EDIT_PORT                   1001
 #define IDC_EDIT_MAX                    1002
 #define IDC_EDIT                        1002
 #define IDC_LIST_PROCESS                1007
+#define IDC_LOCAL_PATH                  1008
+#define IDC_REMOTE_PATH                 1009
+#define IDC_LIST_LOCAL                  1010
+#define IDC_LIST2                       1011
+#define IDC_LIST_REMOTE                 1011
 #define ID_ONLINE_32771                 32771
 #define ID_ONLINE_32772                 32772
 #define ID_Menu                         32773
@@ -87,9 +95,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        146
+#define _APS_NEXT_RESOURCE_VALUE        152
 #define _APS_NEXT_COMMAND_VALUE         32835
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

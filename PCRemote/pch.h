@@ -9,9 +9,25 @@
 
 // 添加要在此处预编译的标头
 #include "framework.h"
+
+#include <afxwin.h>         // MFC core and standard components
+#include <afxext.h>         // MFC extensions
+#include <afxcview.h>
+#include <afxdisp.h>        // MFC Automation classes
+#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+#ifndef _AFX_NO_AFXCMN_SUPPORT
+#include <afxcmn.h>			// MFC support for Windows Common Controls
+#endif // _AFX_NO_AFXCMN_SUPPORT
+
+
+#include <afxtempl.h>
+#include <winsock2.h>
+#include <winioctl.h>
+
 #include <afxcontrolbars.h>
 #include "include/IOCPServer.h"
 #include "../common/macros.h"
+#include <afxwin.h>
 
 enum
 {
