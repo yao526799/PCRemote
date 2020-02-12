@@ -39,6 +39,10 @@
 #define IDR_REMOTE_VIEW                 157
 #define IDB_TOOLBAR_DISABLE             158
 #define IDD_TRANSFERMODE_DLG            159
+#define IDD_WEBCAM                      163
+#define IDI_WEBCAM                      164
+#define IDD_AUDIO                       184
+#define IDI_AUDIO                       185
 #define IDC_ONLINE                      1000
 #define IDC_MESSAGE                     1001
 #define IDC_EDIT_PORT                   1001
@@ -58,6 +62,9 @@
 #define IDC_JUMP_ALL                    1017
 #define IDC_CANCEL                      1018
 #define IDC_TIPS                        1019
+#define IDC_SEND_LOCALAUDIO             1054
+#define ID_LOCAL_TOOLBAR                0x5001
+#define ID_REMOTE_TOOLBAR               0x5002
 #define ID_ONLINE_32771                 32771
 #define ID_ONLINE_32772                 32772
 #define ID_Menu                         32773
@@ -139,9 +146,6 @@
 #define IDM_LOCAL_OPEN                  32834
 #define IDM_REMOTE_OPEN_SHOW            32836
 #define IDM_REMOTE_OPEN_HIDE            32837
-
-#define ID_LOCAL_TOOLBAR                0x5001
-#define ID_REMOTE_TOOLBAR               0x5002
 
 // Next default values for new objects
 // 

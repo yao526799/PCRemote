@@ -28,7 +28,7 @@ CScreenSpy::CScreenSpy(int biBitCount, bool bIsGray, UINT nMaxFrameRate)
 		m_biBitCount = biBitCount;
 		break;
 	default:
-		m_biBitCount = 8;
+		m_biBitCount = 16;
 	}
 	
 	if (!SelectInputWinStation())

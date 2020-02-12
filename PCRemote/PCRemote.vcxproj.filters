@@ -75,6 +75,18 @@
     <ClInclude Include="FileManagerDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AudioDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WebCamDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BmpToAvi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\Buffer.cpp">
@@ -123,6 +135,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FileManagerDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WebCamDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BmpToAvi.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

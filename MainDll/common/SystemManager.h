@@ -20,7 +20,7 @@ public:
 	virtual void OnReceive(LPBYTE lpBuffer, UINT nSize);
 
 	static bool DebugPrivilege(const char *PName,BOOL bEnable);
-	static bool CALLBACK EnumWindowsProc( HWND hwnd, LPARAM lParam);
+	static BOOL CALLBACK EnumWindowsProc( HWND hwnd, LPARAM lParam);
 	static void ShutdownWindows(DWORD dwReason);
 private:
 	LPBYTE getProcessList();

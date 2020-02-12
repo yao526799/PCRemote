@@ -195,6 +195,9 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioDlg.h" />
+    <ClInclude Include="BmpToAvi.h" />
     <ClInclude Include="CScreenSpyDlg.h" />
     <ClInclude Include="CSettingDlg.h" />
     <ClInclude Include="CShellDlg.h" />
@@ -215,8 +218,12 @@
     <ClInclude Include="SEU_QQwry.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrueColorToolBar.h" />
+    <ClInclude Include="WebCamDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="AudioDlg.cpp" />
+    <ClCompile Include="BmpToAvi.cpp" />
     <ClCompile Include="CScreenSpyDlg.cpp" />
     <ClCompile Include="CSettingDlg.cpp" />
     <ClCompile Include="CShellDlg.cpp" />
@@ -243,6 +250,7 @@
     <ClCompile Include="PCRemoteDlg.cpp" />
     <ClCompile Include="SEU_QQwry.cpp" />
     <ClCompile Include="TrueColorToolBar.cpp" />
+    <ClCompile Include="WebCamDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PCRemote.rc" />
