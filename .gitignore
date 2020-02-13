@@ -16,3 +16,7 @@
 /TestDll/Debug
 /TestDll/Release
 /TestDll/x64/Release
+/DLL/Release
+/Loader/Debug
+/Loader/Release
+/testdll2/Release
