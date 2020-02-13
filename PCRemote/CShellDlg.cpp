@@ -16,8 +16,7 @@ CShellDlg::CShellDlg(CWnd* pParent , CIOCPServer* pIOCPServer, ClientContext* pC
 {
 	m_iocpServer = pIOCPServer;
 	m_pContext = pContext;
-	m_nCurSel = 0;
-	m_hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_CMDSHELL));
+	m_nCurSel = 0;	
 }
 
 CShellDlg::~CShellDlg()
@@ -34,9 +33,6 @@ void CShellDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CShellDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT, &CShellDlg::OnEnChangeEdit)
 	ON_WM_SIZE()
-	ON_WM_CLOSE()
-	ON_WM_CTLCOLOR()
-	
 END_MESSAGE_MAP()
 
 
@@ -111,8 +107,6 @@ BOOL CShellDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
 	// TODO:  在此添加额外的初始化
 
 	m_nCurSel = m_edit.GetWindowTextLength();
@@ -161,10 +155,7 @@ void CShellDlg::ResizeEdit()
 	rectEdit.top = 0;
 	rectEdit.right = rectClient.right;
 	rectEdit.bottom = rectClient.bottom;
-	if (m_edit.GetSafeHwnd() != NULL)
-	{
-		m_edit.MoveWindow(&rectEdit);
-	}
+	m_edit.MoveWindow(&rectEdit);
 }
 
 
@@ -175,39 +166,3 @@ void CShellDlg::OnSize(UINT nType, int cx, int cy)
 	// TODO: 在此处添加消息处理程序代码
 	ResizeEdit();
 }
-
-
-void CShellDlg::OnClose()
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	m_pContext->m_Dialog[0] = 0;
-	closesocket(m_pContext->m_Socket);
-	CDialogEx::OnClose();
-}
-
-
-HBRUSH CShellDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	// TODO:  在此更改 DC 的任何特性
-
-	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
-
-	if ((pWnd->GetDlgCtrlID() == IDC_EDIT) && (nCtlColor == CTLCOLOR_EDIT))
-	{
-		COLORREF clr = RGB(255, 255, 255);
-		pDC->SetTextColor(clr);   //设置白色的文本
-		clr = RGB(0, 0, 0);
-		pDC->SetBkColor(clr);     //设置黑色的背景
-		return CreateSolidBrush(clr);  //作为约定，返回背景色对应的刷子句柄
-	}
-	else
-	{
-		return hbr;
-	}
-
-	
-}
-
-

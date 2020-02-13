@@ -60,33 +60,6 @@
     <ClInclude Include="CShellDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CSystemDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CScreenSpyDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FileTransferModeDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="InputDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FileManagerDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="WebCamDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="BmpToAvi.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\Buffer.cpp">
@@ -122,33 +95,6 @@
     <ClCompile Include="CShellDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CSystemDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CScreenSpyDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FileTransferModeDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="InputDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FileManagerDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Audio.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="WebCamDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="BmpToAvi.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\PCRemote.ico">
@@ -160,54 +106,9 @@
     <Image Include="res\toolbar1.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="res\cmdshell.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\system.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\bmp00001.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\toolbar2.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\bitmap1.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\bmp00002.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\toolbar3.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\Bitmap_4.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\Bitmap_5.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\PCRemote.rc2">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="res\cursor1.cur">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="res\dot.cur">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="res\2.cur">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="res\1.cur">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="res\4.cur">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="res\3.cur">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

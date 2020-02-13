@@ -75,22 +75,13 @@ public:
 	void ListenPort();
 	afx_msg void OnMainSet();
 	static void ProcessReceiveComplete(ClientContext* pContext);
-	static void ProcessReceive(ClientContext* pContext);
 private:
 	SEU_QQwry* m_QQwry;
 	afx_msg LRESULT OnAddToList(WPARAM, LPARAM);
 	afx_msg LRESULT OnRemoveFromList(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnOpenShellDialog(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnOpenSystemDialog(WPARAM wParam, LPARAM lParam);
-	afx_msg	LRESULT OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnOpenManagerDialog(WPARAM wParam, LPARAM lParam);
-	afx_msg	LRESULT	OnOpenWebCamDialog(WPARAM, LPARAM);
-	afx_msg	LRESULT	OnOpenAudioDialog(WPARAM, LPARAM);
-
 public:
 	void SendSelectCommand(PBYTE pData, UINT nSize);
-
-
 
 
 };

