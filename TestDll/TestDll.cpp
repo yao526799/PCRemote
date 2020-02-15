@@ -20,7 +20,7 @@ int main()
 		pTestRunT(strHost, nPort);   //调用这个函数
 	}
 
-	system("pause");
+	//system("pause");
 
 	return 0;
 }
