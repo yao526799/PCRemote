@@ -17,7 +17,7 @@
 class CScreenSpy  
 {
 public:
-	CScreenSpy(int biBitCount= 8, bool bIsGray= false, UINT nMaxFrameRate = 100);
+	CScreenSpy(int biBitCount= 16, bool bIsGray= false, UINT nMaxFrameRate = 100);
 	virtual ~CScreenSpy();
 	LPVOID getFirstScreen();
 	LPVOID getNextScreen(LPDWORD lpdwBytes);
