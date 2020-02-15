@@ -18,8 +18,8 @@
 CScreenManager::CScreenManager(CClientSocket *pClient):CManager(pClient)
 {
 	m_bAlgorithm = ALGORITHM_SCAN;
-	m_biBitCount = 8;
-	m_pScreenSpy = new CScreenSpy(8);
+	m_biBitCount = 16;
+	m_pScreenSpy = new CScreenSpy(16);
 	m_bIsWorking = true;
 	m_bIsBlankScreen = false;
 	m_bIsBlockInput = false;

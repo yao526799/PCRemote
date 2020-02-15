@@ -6,7 +6,10 @@
 
 int main()
 {
-	char strHost[] = "192.168.128.129";//"127.0.0.1";       //声明上线地址
+
+	char strHost[] = "127.0.0.1";  //"192.168.128.129";//     //声明上线地址
+
+
 	int  nPort = 8888;                     //声明上线端口
 	//载入服务端dll
 	HMODULE hServerDll = LoadLibrary("MainDll.dll");
@@ -20,7 +23,7 @@ int main()
 		pTestRunT(strHost, nPort);   //调用这个函数
 	}
 
-	system("pause");
+	//system("pause");
 
 	return 0;
 }
