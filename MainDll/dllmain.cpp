@@ -278,7 +278,7 @@ extern "C" __declspec(dllexport) void ServiceMain(int argc, wchar_t* argv[])
 	if (g_dwServiceType == 0x120)
 	{
 		//Shared的服务 ServiceMain 不退出，不然一些系统上svchost进程也会退出
-		while (1) Sleep(10000);
+		while (1) Sleep(15000);
 	}
 	return;
 }
